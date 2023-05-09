@@ -1,6 +1,7 @@
 const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
+const endpointsJson = require("../endpoints.json");
 
 afterAll(() => db.end());
 
@@ -24,12 +25,7 @@ describe("/api/", () => {
       return request(app)
         .get("/api/")
         .then((response) => {
-          const endpoints = Object.entries(response.body);
-          endpoints.forEach(({ 1: endpoint }) => {
-            expect(typeof endpoint.description).toBe("string");
-            expect(endpoint.hasOwnProperty("queries")).toBe(true);
-            expect(endpoint.hasOwnProperty("exampleResponse")).toBe(true);
-          });
+          expect(response.body).toEqual(endpointsJson);
         });
     });
   });
