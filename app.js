@@ -2,6 +2,12 @@ const express = require("express");
 const { getTopics } = require("./controllers/topics.controller");
 const app = express();
 const errors = require("./middleware/errors.middleware");
+const endpointsJson = require("./endpoints.json");
+
+// endpoints route
+app.get("/api/", (req, res, next) => {
+  res.status(200).send(endpointsJson);
+});
 
 // regular routes
 app.get("/api/topics", getTopics);

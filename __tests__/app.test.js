@@ -1,6 +1,7 @@
 const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
+const endpointsJson = require("../endpoints.json");
 
 afterAll(() => db.end());
 
@@ -13,6 +14,18 @@ describe("/api/invalid-path", () => {
         .then((response) => {
           const error = response.body;
           expect(error.msg).toBe("Invalid path!");
+        });
+    });
+  });
+});
+
+describe("/api/", () => {
+  describe("GET 200: responds with a description of endpoints in JSON format", () => {
+    test("that it returns a properly formatted JSON object", () => {
+      return request(app)
+        .get("/api/")
+        .then((response) => {
+          expect(response.body).toEqual(endpointsJson);
         });
     });
   });
