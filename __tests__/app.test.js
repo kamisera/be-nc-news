@@ -18,6 +18,23 @@ describe("/api/invalid-path", () => {
   });
 });
 
+describe("/api/", () => {
+  describe("GET 200: responds with a description of endpoints in JSON format", () => {
+    test("that it returns a properly formatted JSON object", () => {
+      return request(app)
+        .get("/api/")
+        .then((response) => {
+          const endpoints = Object.entries(response.body);
+          endpoints.forEach(({ 1: endpoint }) => {
+            expect(typeof endpoint.description).toBe("string");
+            expect(endpoint.hasOwnProperty("queries")).toBe(true);
+            expect(endpoint.hasOwnProperty("exampleResponse")).toBe(true);
+          });
+        });
+    });
+  });
+});
+
 describe("/api/topics", () => {
   describe("GET 200: responds with all topics", () => {
     test("that it returns an object with an array of 3 topics (nested under 'topics') and they match the expected shape", () => {
