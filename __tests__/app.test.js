@@ -37,13 +37,60 @@ describe("/api/topics", () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
-        .then((res) => {
-          expect(res.body.hasOwnProperty("topics")).toBe(true);
-          const topics = res.body.topics;
+        .then((response) => {
+          expect(response.body.hasOwnProperty("topics")).toBe(true);
+          const topics = response.body.topics;
           topics.forEach((topic) => {
             expect(typeof topic.slug).toBe("string");
             expect(typeof topic.description).toBe("string");
           });
+        });
+    });
+  });
+});
+
+describe("/api/articles", () => {
+  describe("/api/articles/:article_id", () => {
+    describe("GET 200: responds with requested article by ID", () => {
+      test("that it returns an object of the requested ID (nested under 'article') and it matches the expected shape", () => {
+        return request(app)
+          .get("/api/articles/1")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.hasOwnProperty("article")).toBe(true);
+            const { article } = response.body;
+            console.log(article);
+            expect(article.author).toBe("jessjelly");
+            expect(article.title).toBe("Running a Node App");
+            expect(article.article_id).toBe(1);
+            expect(article.body).toBe(
+              "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment."
+            );
+            expect(article.topic).toBe("coding");
+            expect(article.created_at).toBe("2020-11-07T05:03:00.000Z");
+            expect(article.votes).toBe(0);
+            expect(article.article_img_url).toBe(
+              "https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?w=700&h=700"
+            );
+          });
+      });
+    });
+    test("that it returns a 404 error if the article does not exist", () => {
+      return request(app)
+        .get("/api/articles/666")
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Article not found!");
+        });
+    });
+    test("that it returns a 400 error if the given ID is not a number", () => {
+      return request(app)
+        .get("/api/articles/x")
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe(
+            "Invalid ID! Article ID must be a number."
+          );
         });
     });
   });
