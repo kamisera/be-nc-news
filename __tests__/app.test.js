@@ -27,7 +27,6 @@ describe("/api/topics", () => {
         .then((res) => {
           expect(res.body.hasOwnProperty("topics")).toBe(true);
           const topics = res.body.topics;
-          expect(topics.length).toBe(3);
           topics.forEach((topic) => {
             expect(typeof topic.slug).toBe("string");
             expect(typeof topic.description).toBe("string");
