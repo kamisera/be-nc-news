@@ -59,7 +59,6 @@ describe("/api/articles", () => {
           .then((response) => {
             expect(response.body.hasOwnProperty("article")).toBe(true);
             const { article } = response.body;
-            console.log(article);
             expect(article.author).toBe("jessjelly");
             expect(article.title).toBe("Running a Node App");
             expect(article.article_id).toBe(1);
