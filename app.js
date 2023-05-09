@@ -10,6 +10,8 @@ app.get("/api/topics", getTopics);
 app.use(errors.invalidPath);
 
 // error handling middleware
-app.use(errors.somethingElse);
+// fallbackError will be the final error if no other middleware can catch it
+// it will return a generic 500 internal server error
+app.use(errors.fallbackError);
 
 module.exports = app;

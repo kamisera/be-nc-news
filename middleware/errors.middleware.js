@@ -5,7 +5,8 @@ exports.invalidPath = (req, res, next) => {
   next();
 };
 
-exports.somethingElse = (err, req, res, next) => {
+// send internal server error status if the error cannot be categorised elsewhere
+exports.fallbackError = (err, req, res, next) => {
   res.status(500).send({
     msg: "Something went wrong!",
   });
