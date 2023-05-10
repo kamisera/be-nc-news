@@ -1,6 +1,9 @@
 const express = require("express");
 const { getTopics } = require("./controllers/topics.controller");
-const { getArticle } = require("./controllers/articles.controller");
+const {
+  getArticle,
+  getArticles,
+} = require("./controllers/articles.controller");
 const app = express();
 const errors = require("./middleware/errors.middleware");
 const endpointsJson = require("./endpoints.json");
@@ -13,6 +16,7 @@ app.get("/api/", (req, res, next) => {
 // regular routes
 app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticle);
+app.get("/api/articles", getArticles);
 
 // final route (no valid path found)
 app.use(errors.invalidPath);
