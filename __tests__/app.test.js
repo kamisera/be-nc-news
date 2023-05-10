@@ -59,18 +59,18 @@ describe("/api/articles", () => {
           .then((response) => {
             expect(response.body.hasOwnProperty("article")).toBe(true);
             const { article } = response.body;
-            console.log(article);
-            expect(article.author).toBe("jessjelly");
-            expect(article.title).toBe("Running a Node App");
-            expect(article.article_id).toBe(1);
-            expect(article.body).toBe(
-              "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment."
-            );
-            expect(article.topic).toBe("coding");
-            expect(article.created_at).toBe("2020-11-07T05:03:00.000Z");
-            expect(article.votes).toBe(0);
-            expect(article.article_img_url).toBe(
-              "https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?w=700&h=700"
+            expect(article).toEqual(
+              expect.objectContaining({
+                author: "jessjelly",
+                title: "Running a Node App",
+                article_id: 1,
+                body: "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+                topic: "coding",
+                created_at: "2020-11-07T05:03:00.000Z",
+                votes: 0,
+                article_img_url:
+                  "https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?w=700&h=700",
+              })
             );
           });
       });
@@ -92,6 +92,37 @@ describe("/api/articles", () => {
             "Invalid ID! Article ID must be a number."
           );
         });
+    });
+  });
+  describe("/api/articles/", () => {
+    describe("GET 200: responds with all articles", () => {
+      test("that it returns an object with an array of 12 articles, including a 'comment_count' column and sorted by 'created_at' date (desc)", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then((response) => {
+            expect(response.body).toHaveProperty("articles");
+            const articles = response.body.articles;
+            articles.forEach((article) => {
+              expect(article).toHaveProperty("author", expect.any(String));
+              expect(article).toHaveProperty("title", expect.any(String));
+              expect(article).toHaveProperty("article_id", expect.any(Number));
+              expect(article).toHaveProperty("topic", expect.any(String));
+              expect(article.created_at).toMatch(
+                /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
+              );
+              expect(article).toHaveProperty("votes", expect.any(Number));
+              expect(article).toHaveProperty(
+                "article_img_url",
+                expect.any(String)
+              );
+              expect(article).toHaveProperty(
+                "comment_count",
+                expect.any(Number)
+              );
+            });
+          });
+      });
     });
   });
 });
