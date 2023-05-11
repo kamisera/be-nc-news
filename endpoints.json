@@ -47,7 +47,7 @@
     "description": "serves an array containing comments for the requested article ID, sorted by newest to oldest",
     "queries": [],
     "exampleResponse": {
-      "article": {
+      "comments": {
         "comment_id": 89,
         "votes": 2,
         "created_at": "2020-10-24T05:08:00.000Z",
