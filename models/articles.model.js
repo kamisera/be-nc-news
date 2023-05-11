@@ -47,6 +47,14 @@ exports.insertArticleComment = (articleId, comment) => {
     fetchUser(comment.username),
   ])
     .then(() => {
+      if (!comment.body) {
+        return Promise.reject({
+          status: 400,
+          msg: "Comment cannot be missing!",
+        });
+      }
+    })
+    .then(() => {
       const insertQuery = format(
         `
         INSERT INTO comments
