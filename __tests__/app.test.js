@@ -2,7 +2,6 @@ const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
 const endpointsJson = require("../endpoints.json");
-const { expect } = require("@jest/globals");
 
 afterAll(() => db.end());
 
@@ -187,7 +186,32 @@ describe("/api/articles", () => {
           });
       });
     });
-    describe("POST 400: invalid JSON", () => {
+    describe("POST 400: invalid submitted data", () => {
+      test("that it returns a 400 error if comment body property is missing", () => {
+        const newComment = {
+          username: "jessjelly",
+        };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(newComment)
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe("Comment cannot be missing!");
+          });
+      });
+      test("that it returns a 400 error if comment body value is an empty string", () => {
+        const newComment = {
+          username: "jessjelly",
+          body: "",
+        };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(newComment)
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe("Comment cannot be missing!");
+          });
+      });
       test("that it returns a 400 error if JSON markup is invalid", () => {
         const invalidJson = `{"usernam= "jessjelly", "body": "this is a dqdwsd"}`;
         return request(app)
