@@ -2,7 +2,6 @@ const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
 const endpointsJson = require("../endpoints.json");
-const { expect } = require("@jest/globals");
 
 afterAll(() => db.end());
 
@@ -125,6 +124,49 @@ describe("/api/articles", () => {
               expect(article.hasOwnProperty("body")).toBe(false);
             });
             expect(articles).toBeSortedBy("created_at", { descending: true });
+          });
+      });
+    });
+  });
+  describe("/api/articles/:article_id/comments", () => {
+    describe("GET 200: responds with all comments for provided article id, sorted by created_at (desc)", () => {
+      test("that it returns 8 comments for article with id of 1", () => {
+        return request(app)
+          .get("/api/articles/1/comments")
+          .expect(200)
+          .then((response) => {
+            expect(response.body).toHaveProperty("comments");
+            const comments = response.body.comments;
+            expect(comments).toHaveLength(11);
+            comments.forEach((comment) => {
+              expect(comment).toHaveProperty("comment_id", expect.any(Number));
+              expect(comment).toHaveProperty("votes", expect.any(Number));
+              expect(comment.created_at).toMatch(
+                /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
+              );
+              expect(comment).toHaveProperty("author", expect.any(String));
+              expect(comment).toHaveProperty("body", expect.any(String));
+              expect(comment).toHaveProperty("article_id", 1);
+            });
+            expect(comments).toBeSortedBy("created_at", { descending: true });
+          });
+      });
+      test("that it returns a 404 error if the article does not exist", () => {
+        return request(app)
+          .get("/api/articles/666/comments")
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe("Article not found!");
+          });
+      });
+      test("that it returns a 400 error if the given ID is not a number", () => {
+        return request(app)
+          .get("/api/articles/x/comments")
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe(
+              "Invalid ID! Article ID must be a number."
+            );
           });
       });
     });
