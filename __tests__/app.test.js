@@ -174,6 +174,15 @@ describe("/api/articles", () => {
             expect(response.body.msg).toBe("Article not found!");
           });
       });
+      test("that it returns a 404 error if the user does not exist", () => {
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(newComment)
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe("User not found!");
+          });
+      });
       test("that it returns a 400 error if the given ID is not a number", () => {
         return request(app)
           .post("/api/articles/x/comments")
