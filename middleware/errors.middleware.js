@@ -18,9 +18,7 @@ exports.customErrors = (err, req, res, next) => {
 // handle invalid syntax in user submitted JSON data
 exports.invalidSubmittedData = (err, req, res, next) => {
   if (err instanceof SyntaxError) {
-    return res
-      .status(400)
-      .send({ status: 400, message: "Invalid request body!" });
+    return res.status(400).send({ msg: "Invalid request body!" });
   }
   next(err);
 };
