@@ -2,6 +2,7 @@ const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
 const endpointsJson = require("../endpoints.json");
+const { expect } = require("@jest/globals");
 
 afterAll(() => db.end());
 
@@ -103,6 +104,7 @@ describe("/api/articles", () => {
           .then((response) => {
             expect(response.body).toHaveProperty("articles");
             const articles = response.body.articles;
+            expect(articles.length).toBeGreaterThan(0);
             articles.forEach((article) => {
               expect(article).toHaveProperty("author", expect.any(String));
               expect(article).toHaveProperty("title", expect.any(String));
