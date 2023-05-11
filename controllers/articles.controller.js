@@ -14,11 +14,7 @@ exports.getArticle = (req, res, next) => {
   }
   fetchArticle(articleId)
     .then((article) => {
-      if (!article) {
-        return Promise.reject({ status: 404, msg: "Article not found!" });
-      } else {
-        res.status(200).send({ article });
-      }
+      res.status(200).send({ article });
     })
     .catch(next);
 };
