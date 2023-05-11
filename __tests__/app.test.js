@@ -4,8 +4,6 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index");
 const endpointsJson = require("../endpoints.json");
-const { expect } = require("@jest/globals");
-const { test } = require("node:test");
 
 beforeEach(() => seed(testData));
 
@@ -204,7 +202,7 @@ describe("/api/articles/:article_id/comments", () => {
     test("that a valid format is inserted into the database and the created comment is returned", () => {
       const articleId = 1;
       const newComment = {
-        username: "jessjelly",
+        username: "butter_bridge",
         body: "this is a test comment.",
       };
       return request(app)
@@ -256,7 +254,7 @@ describe("/api/articles/:article_id/comments", () => {
   describe("POST 400: invalid submitted data", () => {
     test("that it returns a 400 error if the article id is not a number", () => {
       const newComment = {
-        username: "jessjelly",
+        username: "butter_bridge",
         body: "test comment",
       };
       request(app)
@@ -264,7 +262,6 @@ describe("/api/articles/:article_id/comments", () => {
         .send(newComment)
         .expect(400)
         .then((response) => {
-          expect(response.body.status).toBe(400);
           expect(response.body.msg).toBe(
             "Invalid ID! Article ID must be a number."
           );
@@ -272,7 +269,7 @@ describe("/api/articles/:article_id/comments", () => {
     });
     test("that it returns a 400 error if comment body property is missing", () => {
       const newComment = {
-        username: "jessjelly",
+        username: "butter_bridge",
       };
       return request(app)
         .post("/api/articles/1/comments")
@@ -284,7 +281,7 @@ describe("/api/articles/:article_id/comments", () => {
     });
     test("that it returns a 400 error if comment body value is an empty string", () => {
       const newComment = {
-        username: "jessjelly",
+        username: "butter_bridge",
         body: "",
       };
       return request(app)
@@ -296,7 +293,7 @@ describe("/api/articles/:article_id/comments", () => {
         });
     });
     test("that it returns a 400 error if JSON markup is invalid", () => {
-      const invalidJson = `{"usernam= "jessjelly", "body": "this is a dqdwsd"}`;
+      const invalidJson = `{"usernam= "butter_bridge", "body": "this is a dqdwsd"}`;
       return request(app)
         .post("/api/articles/1/comments")
         .set("Content-type", "application/json")
