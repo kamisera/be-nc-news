@@ -129,4 +129,76 @@ describe("/api/articles", () => {
       });
     });
   });
+  describe("/api/articles/:article_id/comments", () => {
+    describe("POST 201: responds with inserted comment", () => {
+      test("that a valid format is inserted into the database and the created comment is returned", () => {
+        const articleId = 1;
+        const newComment = {
+          username: "jessjelly",
+          body: "this is a test comment.",
+        };
+        return request(app)
+          .post(`/api/articles/${articleId}/comments`)
+          .send(newComment)
+          .expect(201)
+          .then((response) => {
+            expect(response.body).toHaveProperty("comment");
+            const returnedComment = response.body.comment;
+            expect(returnedComment).toHaveProperty(
+              "comment_id",
+              expect.any(Number)
+            );
+            expect(returnedComment).toHaveProperty("body", newComment.body);
+            expect(returnedComment).toHaveProperty("article_id", articleId);
+            expect(returnedComment).toHaveProperty(
+              "author",
+              newComment.username
+            );
+            expect(returnedComment).toHaveProperty("votes", 0);
+            expect(returnedComment.created_at).toMatch(
+              /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
+            );
+          });
+      });
+    });
+    describe("POST 404: user or article not found", () => {
+      const newComment = {
+        username: "madeupusername",
+        body: "this is a test comment.",
+      };
+      test("that it returns a 404 error if the article does not exist", () => {
+        return request(app)
+          .post("/api/articles/666/comments")
+          .send(newComment)
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe("Article not found!");
+          });
+      });
+      test("that it returns a 400 error if the given ID is not a number", () => {
+        return request(app)
+          .post("/api/articles/x/comments")
+          .send(newComment)
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe(
+              "Invalid ID! Article ID must be a number."
+            );
+          });
+      });
+    });
+    describe("POST 400: invalid JSON", () => {
+      test("that it returns a 400 error if JSON markup is invalid", () => {
+        const invalidJson = `{"usernam= "jessjelly", "body": "this is a dqdwsd"}`;
+        return request(app)
+          .post("/api/articles/1/comments")
+          .set("Content-type", "application/json")
+          .send(invalidJson)
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe("Invalid request body!");
+          });
+      });
+    });
+  });
 });
