@@ -1,7 +1,11 @@
 const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
+const seed = require("../db/seeds/seed");
+const testData = require("../db/data/test-data/index");
 const endpointsJson = require("../endpoints.json");
+
+beforeEach(() => seed(testData));
 
 afterAll(() => db.end());
 
@@ -130,7 +134,7 @@ describe("/api/articles", () => {
   });
   describe("/api/articles/:article_id/comments", () => {
     describe("GET 200: responds with all comments for provided article id, sorted by created_at (desc)", () => {
-      test("that it returns 8 comments for article with id of 1", () => {
+      test("that it returns 11 comments for article with id of 1", () => {
         return request(app)
           .get("/api/articles/1/comments")
           .expect(200)
