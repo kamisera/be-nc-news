@@ -2,6 +2,7 @@ const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
 const endpointsJson = require("../endpoints.json");
+const { expect } = require("@jest/globals");
 
 afterAll(() => db.end());
 
@@ -92,6 +93,40 @@ describe("/api/articles", () => {
             "Invalid ID! Article ID must be a number."
           );
         });
+    });
+  });
+  describe("/api/articles/", () => {
+    describe("GET 200: responds with all articles", () => {
+      test("that it returns an object with an array of 12 articles, including a 'comment_count' column and sorted by 'created_at' date (desc)", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then((response) => {
+            expect(response.body).toHaveProperty("articles");
+            const articles = response.body.articles;
+            expect(articles.length).toBeGreaterThan(0);
+            articles.forEach((article) => {
+              expect(article).toHaveProperty("author", expect.any(String));
+              expect(article).toHaveProperty("title", expect.any(String));
+              expect(article).toHaveProperty("article_id", expect.any(Number));
+              expect(article).toHaveProperty("topic", expect.any(String));
+              expect(article.created_at).toMatch(
+                /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
+              );
+              expect(article).toHaveProperty("votes", expect.any(Number));
+              expect(article).toHaveProperty(
+                "article_img_url",
+                expect.any(String)
+              );
+              expect(article).toHaveProperty(
+                "comment_count",
+                expect.any(Number)
+              );
+              expect(article.hasOwnProperty("body")).toBe(false);
+            });
+            expect(articles).toBeSortedBy("created_at", { descending: true });
+          });
+      });
     });
   });
 });
