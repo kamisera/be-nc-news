@@ -2,6 +2,7 @@ const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
 const endpointsJson = require("../endpoints.json");
+const { expect } = require("@jest/globals");
 
 afterAll(() => db.end());
 
@@ -143,19 +144,17 @@ describe("/api/articles", () => {
           .then((response) => {
             expect(response.body).toHaveProperty("comment");
             const returnedComment = response.body.comment;
-            expect(returnedComment).toHaveProperty(
-              "comment_id",
-              expect.any(Number)
-            );
-            expect(returnedComment).toHaveProperty("body", newComment.body);
-            expect(returnedComment).toHaveProperty("article_id", articleId);
-            expect(returnedComment).toHaveProperty(
-              "author",
-              newComment.username
-            );
-            expect(returnedComment).toHaveProperty("votes", 0);
-            expect(returnedComment.created_at).toMatch(
-              /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
+            expect(returnedComment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                body: newComment.body,
+                article_id: articleId,
+                author: newComment.username,
+                votes: 0,
+                created_at: expect.stringMatching(
+                  /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
+                ),
+              })
             );
           });
       });
