@@ -1,6 +1,12 @@
 const db = require("../db/connection");
 
 exports.fetchArticle = (articleId) => {
+  if (/[^0-9]+/.test(articleId)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid ID! Article ID must be a number.",
+    });
+  }
   return db
     .query("SELECT * FROM articles WHERE article_id = $1", [articleId])
     .then((data) => {

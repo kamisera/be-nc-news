@@ -6,12 +6,6 @@ const {
 
 exports.getArticle = (req, res, next) => {
   const articleId = req.params.article_id;
-  if (/[^0-9]+/.test(articleId)) {
-    return Promise.reject({
-      status: 400,
-      msg: "Invalid ID! Article ID must be a number.",
-    }).catch(next);
-  }
   fetchArticle(articleId)
     .then((article) => {
       res.status(200).send({ article });
