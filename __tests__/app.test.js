@@ -155,6 +155,16 @@ describe("/api/articles", () => {
             expect(comments).toBeSortedBy("created_at", { descending: true });
           });
       });
+      test("that it returns an empty array if the article id is valid and has no comments", () => {
+        return request(app)
+          .get("/api/articles/2/comments")
+          .expect(200)
+          .then((response) => {
+            expect(response.body).toHaveProperty("comments");
+            const comments = response.body.comments;
+            expect(comments).toEqual([]);
+          });
+      });
       test("that it returns a 404 error if the article does not exist", () => {
         return request(app)
           .get("/api/articles/666/comments")
