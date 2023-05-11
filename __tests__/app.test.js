@@ -4,6 +4,7 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index");
 const endpointsJson = require("../endpoints.json");
+const { expect } = require("@jest/globals");
 
 beforeEach(() => seed(testData));
 
@@ -143,15 +144,29 @@ describe("/api/articles", () => {
             const comments = response.body.comments;
             expect(comments).toHaveLength(11);
             comments.forEach((comment) => {
-              expect(comment).toHaveProperty("comment_id", expect.any(Number));
-              expect(comment).toHaveProperty("votes", expect.any(Number));
-              expect(comment.created_at).toMatch(
-                /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
+              expect(comment).toEqual(
+                expect.objectContaining({
+                  comment_id: expect.any(Number),
+                  votes: expect.any(Number),
+                  created_at: expect.stringMatching(
+                    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
+                  ),
+                  author: expect.any(String),
+                  body: expect.any(String),
+                  article_id: 1,
+                })
               );
-              expect(comment).toHaveProperty("author", expect.any(String));
-              expect(comment).toHaveProperty("body", expect.any(String));
-              expect(comment).toHaveProperty("article_id", 1);
             });
+            expect(comments[0]).toEqual(
+              expect.objectContaining({
+                comment_id: 5,
+                votes: 0,
+                created_at: "2020-11-03T20:00:00.000Z",
+                author: "icellusedkars",
+                body: "I hate streaming noses",
+                article_id: 1,
+              })
+            );
             expect(comments).toBeSortedBy("created_at", { descending: true });
           });
       });
