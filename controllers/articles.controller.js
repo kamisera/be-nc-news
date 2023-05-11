@@ -1,26 +1,32 @@
-const { fetchArticle, fetchArticles } = require("../models/articles.model");
+const {
+  fetchArticle,
+  fetchArticles,
+  insertArticleComment,
+} = require("../models/articles.model");
 
 exports.getArticle = (req, res, next) => {
   const articleId = req.params.article_id;
-  if (/[^0-9]+/.test(articleId)) {
-    return Promise.reject({
-      status: 400,
-      msg: "Invalid ID! Article ID must be a number.",
-    }).catch(next);
-  }
   fetchArticle(articleId)
     .then((article) => {
-      if (!article) {
-        return Promise.reject({ status: 404, msg: "Article not found!" });
-      } else {
-        res.status(200).send({ article });
-      }
+      res.status(200).send({ article });
     })
     .catch(next);
 };
 
 exports.getArticles = (req, res, next) => {
-  fetchArticles().then((articles) => {
-    res.status(200).send(articles);
-  });
+  fetchArticles()
+    .then((articles) => {
+      res.status(200).send(articles);
+    })
+    .catch(next);
+};
+
+exports.postArticleComment = (req, res, next) => {
+  const articleId = req.params.article_id;
+  const comment = req.body;
+  insertArticleComment(articleId, comment)
+    .then((insertedComment) => {
+      res.status(201).send(insertedComment);
+    })
+    .catch(next);
 };
