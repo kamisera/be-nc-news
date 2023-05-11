@@ -70,8 +70,9 @@ exports.insertArticleComment = (articleId, comment) => {
     .then(({ rows: { 0: returnedComment } }) => {
       return { comment: returnedComment };
     });
+};
 
-  exports.fetchArticleComments = (articleId) => {
+exports.fetchArticleComments = (articleId) => {
   return Promise.all([
     exports.fetchArticle(articleId),
     db.query(
