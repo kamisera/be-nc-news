@@ -1,9 +1,18 @@
 const db = require("../db/connection");
 
 exports.fetchArticle = (articleId) => {
+  if (/[^0-9]+/.test(articleId)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid ID! Article ID must be a number.",
+    });
+  }
   return db
     .query("SELECT * FROM articles WHERE article_id = $1", [articleId])
     .then((data) => {
+      if (!data.rows[0]) {
+        return Promise.reject({ status: 404, msg: "Article not found!" });
+      }
       return data.rows[0];
     });
 };
@@ -28,4 +37,25 @@ exports.fetchArticles = () => {
     .then((data) => {
       return { articles: data.rows };
     });
+};
+
+exports.fetchArticleComments = (articleId) => {
+  return Promise.all([
+    exports.fetchArticle(articleId),
+    db.query(
+      `
+        SELECT 
+          comment_id, 
+          votes, 
+          created_at, 
+          author, 
+          body, 
+          article_id
+        FROM comments 
+        WHERE article_id = $1 
+        ORDER BY created_at DESC 
+      `,
+      [articleId]
+    ),
+  ]).then(({ 1: { rows: comments } }) => comments);
 };
