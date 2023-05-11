@@ -4,6 +4,7 @@ const {
   getArticle,
   getArticles,
   postArticleComment,
+  getArticleComments,
 } = require("./controllers/articles.controller");
 const app = express();
 const errors = require("./middleware/errors.middleware");
@@ -22,6 +23,7 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticle);
 app.get("/api/articles", getArticles);
 app.post("/api/articles/:article_id/comments", postArticleComment);
+app.get("/api/articles/:article_id/comments", getArticleComments);
 
 // final route (no valid path found)
 app.use(errors.invalidPath);
