@@ -8,6 +8,7 @@ const {
   updateArticleVotes,
 } = require("./controllers/articles.controller");
 const { getUsers } = require("./controllers/users.controller");
+const { deleteComment } = require("./controllers/comments.controller");
 const app = express();
 const errors = require("./middleware/errors.middleware");
 const endpointsJson = require("./endpoints.json");
@@ -28,6 +29,8 @@ app.post("/api/articles/:article_id/comments", postArticleComment);
 app.get("/api/articles/:article_id/comments", getArticleComments);
 app.patch("/api/articles/:article_id", updateArticleVotes);
 app.get("/api/users", getUsers);
+app.delete("/api/comments/:comment_id", deleteComment);
+
 
 // final route (no valid path found)
 app.use(errors.invalidPath);
