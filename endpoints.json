@@ -58,7 +58,7 @@
     }
   },
   "POST /api/articles/:article_id/comments": {
-    "description": "serves an array containing comments for the requested article ID, sorted by newest to oldest",
+    "description": "takes a comment object and adds it to the database, then returns it",
     "queries": [],
     "exampleRequest": {
       "username": "cooljmessy",
