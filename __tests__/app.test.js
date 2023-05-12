@@ -339,7 +339,7 @@ describe("/api/articles", () => {
           });
       });
     });
-    describe("GET 400: responds with error if given an invalid sort column", () => {
+    describe("GET 400: responds with error if given an invalid (non-greenlisted) sort column", () => {
       test("that it returns a 400 error if trying to sort by article id", () => {
         return request(app)
           .get("/api/articles?sort_by=article_id")
@@ -351,7 +351,7 @@ describe("/api/articles", () => {
           });
       });
     });
-    describe("GET 400: responds with error if given an invalid sort column", () => {
+    describe("GET 400: responds with error if given an invalid sort direction", () => {
       test("that it returns a 400 error if trying to sort in neither asc or desc order", () => {
         return request(app)
           .get("/api/articles?order=x")
