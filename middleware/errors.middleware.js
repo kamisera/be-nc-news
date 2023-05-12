@@ -25,7 +25,6 @@ exports.invalidSubmittedData = (err, req, res, next) => {
 
 // send internal server error status if the error cannot be categorised elsewhere
 exports.fallbackError = (err, req, res, next) => {
-  console.log(err);
   res.status(500).send({
     msg: "Something went wrong!",
   });
