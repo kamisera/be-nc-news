@@ -1,6 +1,7 @@
 const db = require("../db/connection");
 const format = require("pg-format");
 const { fetchUser } = require("./users.model");
+const { fetchTopics } = require("./topics.model");
 
 exports.fetchArticle = (articleId) => {
   if (/[^0-9]+/.test(articleId)) {
@@ -19,26 +20,45 @@ exports.fetchArticle = (articleId) => {
     });
 };
 
-exports.fetchArticles = () => {
-  return db
-    .query(
-      `
-        SELECT 
-          author,
-          title,
-          article_id,
-          topic,
-          created_at,
-          votes,
-          article_img_url,
-          (SELECT count(*) FROM comments WHERE articles.article_id = comments.article_id)::int AS comment_count
-        FROM articles 
-        ORDER BY created_at DESC;
-      `
-    )
-    .then((data) => {
-      return { articles: data.rows };
+exports.fetchArticles = (queries) => {
+  const { topic, sort_by: sortBy, order: sortDirection } = queries;
+  const sortByGreenList = ["author", "title", "topic", "created_at", "votes"];
+  const sortDirectionGreenList = ["asc", "desc"];
+
+  if (sortBy && !sortByGreenList.includes(sortBy)) {
+    return Promise.reject({
+      status: 400,
+      msg: `Articles can only be sorted by: ${sortByGreenList.join(", ")}!`,
     });
+  }
+
+  if (sortDirection && !sortDirectionGreenList.includes(sortDirection)) {
+    return Promise.reject({
+      status: 400,
+      msg: `Articles can only be sorted in ascending (asc) or descending (desc) order!`,
+    });
+  }
+
+  let query = `
+    SELECT 
+      author,
+      title,
+      article_id,
+      topic,
+      created_at,
+      votes,
+      article_img_url,
+      (SELECT count(*) FROM comments WHERE articles.article_id = comments.article_id)::int AS comment_count
+    FROM articles 
+  `;
+
+  if (topic) query += format(` WHERE topic = %L`, topic);
+  query += ` ORDER BY ${sortBy || "created_at"}`;
+  query += ` ${sortDirection || "DESC"}`;
+
+  return db.query(query).then((data) => {
+    return { articles: data.rows };
+  });
 };
 
 exports.insertArticleComment = (articleId, comment) => {

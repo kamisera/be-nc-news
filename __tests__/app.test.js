@@ -221,6 +221,149 @@ describe("/api/articles", () => {
           });
       });
     });
+    describe("GET 200: responds with articles filtered by topic", () => {
+      test("that it returns articles filtered by topic: mitch", () => {
+        return request(app)
+          .get("/api/articles?topic=mitch")
+          .expect(200)
+          .then((response) => {
+            expect(response.body).toHaveProperty("articles");
+            const { articles } = response.body;
+            expect(articles).toHaveLength(11);
+            articles.forEach((article) => {
+              expect(article).toEqual(
+                expect.objectContaining({
+                  author: expect.any(String),
+                  title: expect.any(String),
+                  article_id: expect.any(Number),
+                  topic: "mitch",
+                  created_at: expect.stringMatching(
+                    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
+                  ),
+                  votes: expect.any(Number),
+                  article_img_url: expect.any(String),
+                  comment_count: expect.any(Number),
+                })
+              );
+            });
+          });
+      });
+      test("that it returns an empty array if the topic does not exist", () => {
+        return request(app)
+          .get("/api/articles?topic=madeuptopic")
+          .expect(200)
+          .then((response) => {
+            expect(response.body).toHaveProperty("articles");
+            const { articles } = response.body;
+            expect(articles).toHaveLength(0);
+          });
+      });
+      test("that it returns articles sorted by title in descending order", () => {
+        return request(app)
+          .get("/api/articles?sort_by=title")
+          .expect(200)
+          .then((response) => {
+            expect(response.body).toHaveProperty("articles");
+            const { articles } = response.body;
+            expect(articles).toHaveLength(12);
+            articles.forEach((article) => {
+              expect(article).toEqual(
+                expect.objectContaining({
+                  author: expect.any(String),
+                  title: expect.any(String),
+                  article_id: expect.any(Number),
+                  topic: expect.any(String),
+                  created_at: expect.stringMatching(
+                    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
+                  ),
+                  votes: expect.any(Number),
+                  article_img_url: expect.any(String),
+                  comment_count: expect.any(Number),
+                })
+              );
+            });
+            expect(articles).toBeSortedBy("title", { descending: true });
+          });
+      });
+      test("that it returns articles in ascending order (default date)", () => {
+        return request(app)
+          .get("/api/articles?order=asc")
+          .expect(200)
+          .then((response) => {
+            expect(response.body).toHaveProperty("articles");
+            const { articles } = response.body;
+            expect(articles).toHaveLength(12);
+            articles.forEach((article) => {
+              expect(article).toEqual(
+                expect.objectContaining({
+                  author: expect.any(String),
+                  title: expect.any(String),
+                  article_id: expect.any(Number),
+                  topic: expect.any(String),
+                  created_at: expect.stringMatching(
+                    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
+                  ),
+                  votes: expect.any(Number),
+                  article_img_url: expect.any(String),
+                  comment_count: expect.any(Number),
+                })
+              );
+            });
+            expect(articles).toBeSortedBy("created_at", { ascending: true });
+          });
+      });
+      test("that multiple queries work together", () => {
+        return request(app)
+          .get("/api/articles?topic=mitch&sort_by=title&order=asc")
+          .expect(200)
+          .then((response) => {
+            expect(response.body).toHaveProperty("articles");
+            const { articles } = response.body;
+            expect(articles).toHaveLength(11);
+            articles.forEach((article) => {
+              expect(article).toEqual(
+                expect.objectContaining({
+                  author: expect.any(String),
+                  title: expect.any(String),
+                  article_id: expect.any(Number),
+                  topic: "mitch",
+                  created_at: expect.stringMatching(
+                    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
+                  ),
+                  votes: expect.any(Number),
+                  article_img_url: expect.any(String),
+                  comment_count: expect.any(Number),
+                })
+              );
+            });
+            expect(articles).toBeSortedBy("title", { ascending: true });
+          });
+      });
+    });
+    describe("GET 400: responds with error if given an invalid (non-greenlisted) sort column", () => {
+      test("that it returns a 400 error if trying to sort by article id", () => {
+        return request(app)
+          .get("/api/articles?sort_by=article_id")
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe(
+              "Articles can only be sorted by: author, title, topic, created_at, votes!"
+            );
+          });
+      });
+    });
+    describe("GET 400: responds with error if given an invalid sort direction", () => {
+      test("that it returns a 400 error if trying to sort in neither asc or desc order", () => {
+        return request(app)
+          .get("/api/articles?order=x")
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe(
+              "Articles can only be sorted in ascending (asc) or descending (desc) order!"
+            );
+          });
+      });
+    });
   });
   describe("/api/articles/:article_id/comments", () => {
     describe("GET 200: responds with all comments for provided article id, sorted by created_at (desc)", () => {
