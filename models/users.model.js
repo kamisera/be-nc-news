@@ -10,3 +10,11 @@ exports.fetchUser = (username) => {
       return { user: data.rows[0] };
     });
 };
+
+exports.fetchUsers = () => {
+  return db
+    .query(`SELECT username, name, avatar_url FROM users`)
+    .then((data) => {
+      return { users: data.rows };
+    });
+};
