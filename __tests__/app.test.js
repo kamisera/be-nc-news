@@ -28,7 +28,7 @@ describe("/api/", () => {
     test("that it returns a properly formatted JSON object", () => {
       return request(app)
         .get("/api/")
-        .status(200)
+        .expect(200)
         .then((response) => {
           expect(response.body).toEqual(endpointsJson);
         });
