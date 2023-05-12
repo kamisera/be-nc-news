@@ -4,6 +4,7 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index");
 const endpointsJson = require("../endpoints.json");
+const { expect } = require("@jest/globals");
 
 beforeEach(() => seed(testData));
 
@@ -391,6 +392,30 @@ describe("/api/articles", () => {
             expect(response.body.msg).toBe("Invalid request body!");
           });
       });
+    });
+  });
+});
+
+describe("/api/users", () => {
+  describe("GET 200: responds with all users", () => {
+    test("that it returns an object with an array of 4 users (nested under 'users') and they match the expected shape", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then((response) => {
+          expect(response.body.hasOwnProperty("users")).toBe(true);
+          const users = response.body.users;
+          expect(users.length).toBe(4);
+          users.forEach((user) => {
+            expect(user).toEqual(
+              expect.objectContaining({
+                username: expect.any(String),
+                name: expect.any(String),
+                avatar_url: expect.any(String),
+              })
+            );
+          });
+        });
     });
   });
 });
