@@ -28,6 +28,7 @@ describe("/api/", () => {
     test("that it returns a properly formatted JSON object", () => {
       return request(app)
         .get("/api/")
+        .status(200)
         .then((response) => {
           expect(response.body).toEqual(endpointsJson);
         });
@@ -390,6 +391,26 @@ describe("/api/articles", () => {
           .then((response) => {
             expect(response.body.msg).toBe("Invalid request body!");
           });
+      });
+    });
+  });
+});
+
+describe("/api/comments", () => {
+  describe("/api/comments/:comment_id", () => {
+    describe("DELETE 204: delete a comment by its id", () => {
+      test("that it returns a 204 status with no content for successful deletion", () => {
+        return request(app).delete("/api/comments/1").expect(204);
+      });
+    });
+    describe("DELETE 404: comment not found", () => {
+      test("that it returns a 404 status if no comment for given id exists", () => {
+        return request(app).delete("/api/comments/666").expect(404);
+      });
+    });
+    describe("DELETE 400: comment id not a number", () => {
+      test("that it returns a 400 status if the comment id is not a number", () => {
+        return request(app).delete("/api/comments/a").expect(400);
       });
     });
   });
