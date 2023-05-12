@@ -152,7 +152,7 @@ describe("/api/articles", () => {
       });
     });
     describe("PATCH 404: responds with error if article not found", () => {
-      test("that it returns a 404 error if no user with the given user id exists", () => {
+      test("that it returns a 404 error if that article doesn't exist", () => {
         const newVote = { inc_votes: 1 };
         return request(app)
           .patch("/api/articles/666")
