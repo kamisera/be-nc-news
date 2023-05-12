@@ -56,5 +56,23 @@
         "article_id": 1
       }
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "takes a comment object and adds it to the database, then returns it",
+    "queries": [],
+    "exampleRequest": {
+      "username": "cooljmessy",
+      "body": "this is a new comment"
+    },
+    "exampleResponse": {
+      "comments": {
+        "comment_id": 100,
+        "votes": 0,
+        "created_at": "2020-10-24T05:08:00.000Z",
+        "author": "cooljmessy",
+        "body": "this is a new comment",
+        "article_id": 1
+      }
+    }
   }
 }

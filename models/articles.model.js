@@ -1,4 +1,6 @@
 const db = require("../db/connection");
+const format = require("pg-format");
+const { fetchUser } = require("./users.model");
 
 exports.fetchArticle = (articleId) => {
   if (/[^0-9]+/.test(articleId)) {
@@ -36,6 +38,37 @@ exports.fetchArticles = () => {
     )
     .then((data) => {
       return { articles: data.rows };
+    });
+};
+
+exports.insertArticleComment = (articleId, comment) => {
+  return Promise.all([
+    this.fetchArticle(articleId),
+    fetchUser(comment.username),
+  ])
+    .then(() => {
+      if (!comment.body) {
+        return Promise.reject({
+          status: 400,
+          msg: "Comment cannot be missing!",
+        });
+      }
+    })
+    .then(() => {
+      const insertQuery = format(
+        `
+        INSERT INTO comments
+          (author, body, article_id)
+        VALUES
+          (%L)
+        RETURNING *;
+      `,
+        [comment.username, comment.body, articleId]
+      );
+      return db.query(insertQuery);
+    })
+    .then(({ rows: { 0: returnedComment } }) => {
+      return { comment: returnedComment };
     });
 };
 
