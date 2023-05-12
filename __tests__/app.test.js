@@ -98,6 +98,90 @@ describe("/api/articles", () => {
         });
     });
   });
+  describe("PATCH 200: responds with the article that had its vote count changed", () => {
+    test("that it successfully increments the vote_count for the given article", () => {
+      const newVote = { inc_votes: 5 };
+      return request(app)
+        .patch("/api/articles/1/")
+        .send(newVote)
+        .expect(200)
+        .then((response) => {
+          expect(response.body).toHaveProperty("article");
+          const updatedArticle = response.body.article;
+          expect(updatedArticle).toEqual(
+            expect.objectContaining({
+              author: "butter_bridge",
+              title: "Living in the shadow of a great man",
+              article_id: 1,
+              body: "I find this existence challenging",
+              topic: "mitch",
+              created_at: "2020-07-09T19:11:00.000Z",
+              votes: 105,
+              article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            })
+          );
+        });
+    });
+    test("that it successfully decrements the vote_count for the given article", () => {
+      const newVote = { inc_votes: -5 };
+      return request(app)
+        .patch("/api/articles/1/")
+        .send(newVote)
+        .expect(200)
+        .then((response) => {
+          expect(response.body).toHaveProperty("article");
+          const updatedArticle = response.body.article;
+          expect(updatedArticle).toEqual(
+            expect.objectContaining({
+              author: "butter_bridge",
+              title: "Living in the shadow of a great man",
+              article_id: 1,
+              body: "I find this existence challenging",
+              topic: "mitch",
+              created_at: "2020-07-09T19:11:00.000Z",
+              votes: 95,
+              article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            })
+          );
+        });
+    });
+  });
+  describe("PATCH 404: responds with error if article not found", () => {
+    test("that it returns a 404 error if no user with the given user id exists", () => {
+      const newVote = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/articles/666")
+        .send(newVote)
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Article not found!");
+        });
+    });
+  });
+  describe("PATCH 400: responds with error if there is a problem with the given new vote value", () => {
+    test("that it returns a 400 error if inc_votes property is missing from request", () => {
+      const newVote = { something: "else" };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(newVote)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("New vote must not be missing!");
+        });
+    });
+    test("that it returns a 400 error if the given newVote value is something other than a whole number", () => {
+      const newVote = { inc_votes: "x" };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(newVote)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("New vote must be an integer!");
+        });
+    });
+  });
 });
 
 describe("/api/articles/", () => {

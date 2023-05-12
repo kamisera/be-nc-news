@@ -92,3 +92,41 @@ exports.fetchArticleComments = (articleId) => {
     ),
   ]).then(({ 1: { rows: comments } }) => comments);
 };
+
+exports.amendArticleVotes = (articleId, newVote) => {
+  if (!newVote) {
+    return Promise.reject({
+      status: 400,
+      msg: "New vote must not be missing!",
+    });
+  }
+  if (!/^[-+]{0,1}[0-9]+$/.test(newVote)) {
+    return Promise.reject({ status: 400, msg: "New vote must be an integer!" });
+  }
+  return this.fetchArticle(articleId).then((article) => {
+    return db
+      .query(
+        `
+          UPDATE 
+            articles
+          SET 
+            votes = votes + $1
+          WHERE
+            article_id = $2
+          RETURNING
+            author,
+            title,
+            article_id,
+            body,
+            topic,
+            created_at,
+            votes,
+            article_img_url;
+        `,
+        [newVote, articleId]
+      )
+      .then(({ rows: { 0: updatedArticle } }) => {
+        return { article: updatedArticle };
+      });
+  });
+};
