@@ -1,15 +1,15 @@
 {
-  "name": "NewsHub API",
+  "name": "newshub-api",
   "version": "1.0.0",
   "description": "A RESTful API that stores and provides access to a variety of news articles.",
   "main": "index.js",
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
-    "test": "npm run seed && jest",
+    "test": "$npm_execpath run seed && jest",
     "prepare": "husky install",
     "dev": "nodemon listen.js",
-    "seed-prod": "NODE_ENV=production npm run seed",
+    "seed-prod": "NODE_ENV=production $npm_execpath run seed",
     "start": "node listen.js"
   },
   "repository": {
