@@ -1,28 +1,28 @@
 {
-  "name": "be-nc-news",
+  "name": "newshub-api",
   "version": "1.0.0",
-  "description": "bc-nc-news",
+  "description": "A RESTful API that stores and provides access to a variety of news articles.",
   "main": "index.js",
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
-    "test": "npm run seed && jest",
+    "test": "$npm_execpath run seed && jest",
     "prepare": "husky install",
     "dev": "nodemon listen.js",
-    "seed-prod": "NODE_ENV=production npm run seed",
+    "seed-prod": "NODE_ENV=production $npm_execpath run seed",
     "start": "node listen.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/northcoders/be-nc-news.git"
+    "url": "git+https://github.com/kamisera/be-nc-news.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/northcoders/be-nc-news/issues"
+    "url": "https://github.com/kamisera/be-nc-news/issues"
   },
-  "homepage": "https://github.com/northcoders/be-nc-news#readme",
+  "homepage": "https://github.com/kamisera/be-nc-news#readme",
   "devDependencies": {
     "husky": "^8.0.2",
     "jest": "^27.5.1",
