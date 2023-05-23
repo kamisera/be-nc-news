@@ -1,7 +1,7 @@
 {
-  "name": "be-nc-news",
+  "name": "NewsHub API",
   "version": "1.0.0",
-  "description": "bc-nc-news",
+  "description": "A RESTful API that stores and provides access to a variety of news articles.",
   "main": "index.js",
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
@@ -14,15 +14,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/northcoders/be-nc-news.git"
+    "url": "git+https://github.com/kamisera/be-nc-news.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/northcoders/be-nc-news/issues"
+    "url": "https://github.com/kamisera/be-nc-news/issues"
   },
-  "homepage": "https://github.com/northcoders/be-nc-news#readme",
+  "homepage": "https://github.com/kamisera/be-nc-news#readme",
   "devDependencies": {
     "husky": "^8.0.2",
     "jest": "^27.5.1",
