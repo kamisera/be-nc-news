@@ -1,7 +1,6 @@
 const db = require("../db/connection");
 const format = require("pg-format");
 const { fetchUser } = require("./users.model");
-const { fetchTopics } = require("./topics.model");
 
 exports.fetchArticle = (articleId) => {
   if (/[^0-9]+/.test(articleId)) {
@@ -11,7 +10,22 @@ exports.fetchArticle = (articleId) => {
     });
   }
   return db
-    .query("SELECT * FROM articles WHERE article_id = $1", [articleId])
+    .query(
+      `
+        SELECT 
+          article_id,
+          title,
+          topic,
+          author,
+          body,
+          created_at,
+          votes,
+          article_img_url,
+          (SELECT count(*) FROM comments WHERE articles.article_id = comments.article_id)::int AS comment_count
+        FROM articles WHERE article_id = $1
+      `,
+      [articleId]
+    )
     .then((data) => {
       if (!data.rows[0]) {
         return Promise.reject({ status: 404, msg: "Article not found!" });
