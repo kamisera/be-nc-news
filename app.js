@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const { getTopics } = require("./controllers/topics.controller");
 const {
   getArticle,
@@ -15,6 +16,7 @@ const endpointsJson = require("./endpoints.json");
 
 // middleware to use
 app.use(express.json());
+app.use(cors());
 
 // endpoints route
 app.get("/api/", (req, res, next) => {
@@ -30,7 +32,6 @@ app.get("/api/articles/:article_id/comments", getArticleComments);
 app.patch("/api/articles/:article_id", updateArticleVotes);
 app.get("/api/users", getUsers);
 app.delete("/api/comments/:comment_id", deleteComment);
-
 
 // final route (no valid path found)
 app.use(errors.invalidPath);
