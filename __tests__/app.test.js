@@ -348,7 +348,7 @@ describe("/api/articles", () => {
           .expect(400)
           .then((response) => {
             expect(response.body.msg).toBe(
-              "Articles can only be sorted by: author, title, topic, created_at, votes!"
+              "Articles can only be sorted by: author, title, topic, created_at, votes, comment_count!"
             );
           });
       });

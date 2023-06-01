@@ -36,7 +36,14 @@ exports.fetchArticle = (articleId) => {
 
 exports.fetchArticles = (queries) => {
   const { topic, sort_by: sortBy, order: sortDirection } = queries;
-  const sortByGreenList = ["author", "title", "topic", "created_at", "votes"];
+  const sortByGreenList = [
+    "author",
+    "title",
+    "topic",
+    "created_at",
+    "votes",
+    "comment_count",
+  ];
   const sortDirectionGreenList = ["asc", "desc"];
 
   if (sortBy && !sortByGreenList.includes(sortBy)) {
